@@ -1,39 +1,65 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class Run {
 
-	String fileName = "";
-	String schedAlgorithm = "";
-
+	private String inputFileName = "";
+	private String outputFileName = "output_files/output";
+	private String schedAlgorithm = "";
+	
+	private ArrayList<Task> tasks = new ArrayList<>();
+	
+	private static int taskID = 0;
+	
 	public static void main(String[] args) {
 		Run r = new Run();
 
 		//Get parameters
-		r.fileName = args[0];
+		r.inputFileName = args[0];
 		r.schedAlgorithm = args[1];
 
 		//Read input file
 		try {
-			//Create object of FileReader
-			FileReader inputFile = new FileReader(r.fileName);
-
-			//Instantiate the BufferedReader Class
+			FileReader inputFile = new FileReader(r.inputFileName);
 			BufferedReader bufferReader = new BufferedReader(inputFile);
 
-			//Variable to hold the one line data
 			String line;
 
-			// Read file line by line and print on the console
-			while ((line = bufferReader.readLine()) != null)   {
-				System.out.println(line);
+			while((line = bufferReader.readLine()) != null)   {
+				//Split line by whitespace (" ")
+				// Each line will be formated like this:
+				// [startTime	length	priority]
+				String[] str = line.split(" ");
+				int startTime = Integer.parseInt(str[0]);
+				int length = Integer.parseInt(str[1]);
+				int priority = Integer.parseInt(str[2]);
+				// Create a task and add it to the array tasks
+				r.tasks.add(new Task(taskID++, startTime, length, priority));
 			}
 			//Close the buffer reader
 			bufferReader.close();
 		} catch(Exception e) {
 			System.out.println("Error while reading file line by line:" + e.getMessage());                      
 		}
-
+		
+		//Create output file and write diagram header
+		try {
+			FileWriter outputFile = new FileWriter(r.outputFileName);
+			BufferedWriter bufferWriter = new BufferedWriter(outputFile);
+			String header = "timer   ";
+			for (int i = 1; i <= r.tasks.size(); i++) {
+				header += String.format("P%d  ", i);
+			}
+			bufferWriter.write(header);
+			//TODO Call scheduler
+			
+			bufferWriter.close();
+		} catch (Exception e) {
+			System.out.println("Error!!!" + e.getMessage());
+		}
 	}
 
 }
