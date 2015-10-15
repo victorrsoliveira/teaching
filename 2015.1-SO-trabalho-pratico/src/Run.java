@@ -2,7 +2,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Run {
 
@@ -45,19 +47,26 @@ public class Run {
 			System.out.println("Error while reading file line by line:" + e.getMessage());                      
 		}
 		
+		// Sort tasks according to starting time
+		Collections.sort(r.tasks);
+		
 		//Create output file and write diagram header
 		try {
 			FileWriter outputFile = new FileWriter(r.outputFileName);
 			BufferedWriter bufferWriter = new BufferedWriter(outputFile);
-			String header = "timer   ";
+			String header = "tempo   ";
 			for (int i = 1; i <= r.tasks.size(); i++) {
 				header += String.format("P%d  ", i);
 			}
-			bufferWriter.write(header);
-			//TODO Call scheduler
+			bufferWriter.write(header + "\n");
 			
+			// Call scheduler
+			if (r.schedAlgorithm.equals("fcfs")) {
+				FCFSScheduler scheduler = new FCFSScheduler(r.tasks, bufferWriter);
+				scheduler.schedule();
+			}
 			bufferWriter.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			System.out.println("Error!!!" + e.getMessage());
 		}
 	}
