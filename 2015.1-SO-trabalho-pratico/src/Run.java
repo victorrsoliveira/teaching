@@ -65,6 +65,8 @@ public class Run {
 				FCFSScheduler scheduler = new FCFSScheduler(r.tasks, bufferWriter);
 				scheduler.schedule();
 			}
+			//TODO Call Round Robin Scheduler -- JOAO VICTOR code
+			
 			bufferWriter.close();
 		} catch (IOException e) {
 			System.out.println("Error!!!" + e.getMessage());
